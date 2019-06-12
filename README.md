@@ -1,4 +1,4 @@
-# node-rest-api
+# Node Restfull Api
 
 This project was built with node Js. To learn more, click here: https://nodejs.org/en/about/
 
