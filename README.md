@@ -38,3 +38,7 @@ Authentication = "zyxabc123"
 Content-Type = "application/json"
 ```
 
+## For middleware
+https://expressjs.com/en/guide/using-middleware.html
+https://medium.com/@selvaganesh93/how-node-js-middleware-works-d8e02a936113
+
