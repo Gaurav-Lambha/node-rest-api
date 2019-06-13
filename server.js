@@ -38,6 +38,11 @@ app.use(bodyParser.json());
 // Application Level Middleware
 app.use(authMiddleware);
 
+//Error-handling middleware
+app.use(function (err, req, res, next) {
+    console.error(err.stack)
+    res.status(500).send('Something broke!')
+  });
 // set api routes
 app.use('/', indexRouter);
 // Api You Can access after Authorization || Authentication Key
