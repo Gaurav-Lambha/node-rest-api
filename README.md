@@ -2,15 +2,6 @@
 
 This project was built with node Js. To learn more, click here: https://nodejs.org/en/about/
 
-## Instructions
-After cloning into repo, cd to project root directory and create a .env file. This file requires a TURBO_APP_ID and SESSION_SECRET keys:
-
-```
-TURBO_ENV=dev
-SESSION_SECRET=YOUR_SESSION_SECRET
-TURBO_APP_ID=123abc
-```
-
 ## Initialize the application with a package.json file
 
    Go to the root folder of your application and type `npm init` to initialize your app with a package.json file.
@@ -36,5 +27,14 @@ To build for production, run build:
 
 ```
 $ npm run build
+```
+
+## Instructions Related to Project
+When you start the calling api. all api is working fine `/apiname` but those api call with `/api/apiname` must be set all below point in header.
+
+```
+Authorization = "admin"
+Authentication = "zyxabc123"
+Content-Type = "application/json"
 ```
 

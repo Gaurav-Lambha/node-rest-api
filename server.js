@@ -1,9 +1,17 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-// Configuring the database
- const dbConfig = require('./config/database.config.js');
- const mongoose = require('mongoose');
+// Database Configuring
+const dbConfig = require('./config/database.config.js');
+const mongoose = require('mongoose');
 
+// Router Configuring
+const indexRouter = require('./routes/Index.js');
+const apiRouter = require('./routes/Api.js');
+
+// Middleware Configuring
+const authMiddleware = require('./server/app-middleware.js');
+
+// Server Configuring
 const hostname = '127.0.0.1';
 const port = 3000;
 
@@ -11,9 +19,9 @@ const port = 3000;
 mongoose.connect(dbConfig.url, {
     useNewUrlParser: true
 }).then(() => {
-    console.log("Successfully connected to the database");
+    console.log("Connected to DB");
 }).catch(err => {
-    console.log('Could not connect to the database. Exiting now...', err);
+    console.log('Could not connect to DB.', err);
     process.exit();
 });
 
@@ -27,12 +35,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // parse requests of content-type - application/json
 app.use(bodyParser.json());
 
+// Application Level Middleware
+app.use(authMiddleware);
+
+// set api routes
+app.use('/', indexRouter);
+// Api You Can access after Authorization || Authentication Key
+app.use('/api', apiRouter);
+
 // listen for requests
 app.listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`); 
-    // set api routes
-    require('./routes/index.js')(app);
-    require('./routes/api.js')(app);
-    require('./routes/custom-api.js')(app);
+    console.log(`Server running at http://${hostname}:${port}/`);   
 });
 

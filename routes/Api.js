@@ -1,146 +1,149 @@
-module.exports = (app) => {
+const controllers = require('../controllers/Index');
+const express = require('express');
+const router = express.Router();
+const routerAuthMiddleware = require('../server/router-middleware.js');
 
-    const controllers = require('../controllers/Index');
-    
-    app.get('/:resource', (req, res) => {
-        const resource = req.params.resource
-        const controller = controllers[resource]
-        const filters = req.query
+router.use(routerAuthMiddleware);
 
-        if (controller == null) {
+router.get('/:resource', (req, res) => {
+    const resource = req.params.resource
+    const controller = controllers[resource]
+    const filters = req.query
+
+    if (controller == null) {
+        res.json({
+            confirmation: 'fail',
+            message: 'Invalid Resource'
+        })
+        return
+    }
+
+    controller.get(filters)
+        .then(data => {
+            res.json({
+                confirmation: 'success',
+                data: data
+            })
+        })
+        .catch(err => {
             res.json({
                 confirmation: 'fail',
-                message: 'Invalid Resource'
+                message: err.message
             })
-            return
-        }
+        })
+})
 
-        controller.get(filters)
-            .then(data => {
-                res.json({
-                    confirmation: 'success',
-                    data: data
-                })
+router.get('/:resource/:id', (req, res) => {
+    const resource = req.params.resource
+    const id = req.params.id
+
+    const controller = controllers[resource]
+    if (controller == null) {
+        res.json({
+            confirmation: 'fail',
+            message: 'Invalid Resource'
+        })
+
+        return
+    }
+
+    controller.getById(id)
+        .then(data => {
+            res.json({
+                confirmation: 'success',
+                data: data
             })
-            .catch(err => {
-                res.json({
-                    confirmation: 'fail',
-                    message: err.message
-                })
-            })
-    })
-
-    app.get('/:resource/:id', (req, res) => {
-        const resource = req.params.resource
-        const id = req.params.id
-
-        const controller = controllers[resource]
-        if (controller == null) {
+        })
+        .catch(err => {
             res.json({
                 confirmation: 'fail',
-                message: 'Invalid Resource'
+                message: err.message
             })
+        })
+})
 
-            return
-        }
+// POST - create new entities:
+router.post('/:resource', (req, res) => {
+    const resource = req.params.resource
+    const controller = controllers[resource]
+    if (controller == null) {
+        res.json({
+            confirmation: 'fail',
+            message: 'Invalid Resource'
+        })
 
-        controller.getById(id)
-            .then(data => {
-                res.json({
-                    confirmation: 'success',
-                    data: data
-                })
+        return
+    }
+
+    controller.post(req.body)
+        .then(data => {
+            res.json({
+                confirmation: 'success',
+                data: data
             })
-            .catch(err => {
-                res.json({
-                    confirmation: 'fail',
-                    message: err.message
-                })
-            })
-    })
-
-    // POST - create new entities:
-    app.post('/:resource', (req, res) => {
-        const resource = req.params.resource
-        const controller = controllers[resource]
-        if (controller == null) {
+        })
+        .catch(err => {
             res.json({
                 confirmation: 'fail',
-                message: 'Invalid Resource'
+                message: err.message
             })
+        })
+})
 
-            return
-        }
+// PUT - updating resources
+router.put('/:resource/:id', (req, res) => {
+    const resource = req.params.resource
+    const controller = controllers[resource]
+    if (controller == null) {
+        res.json({
+            confirmation: 'fail',
+            message: 'Invalid Resource'
+        })
 
-        controller.post(req.body)
-            .then(data => {
-                res.json({
-                    confirmation: 'success',
-                    data: data
-                })
+        return
+    }
+
+    controller.put(req.params.id, req.body)
+        .then(data => {
+            res.json({
+                confirmation: 'success',
+                data: data
             })
-            .catch(err => {
-                res.json({
-                    confirmation: 'fail',
-                    message: err.message
-                })
-            })
-    })
-
-    // PUT - updating resources
-    app.put('/:resource/:id', (req, res) => {
-        const resource = req.params.resource
-        const controller = controllers[resource]
-        if (controller == null) {
+        })
+        .catch(err => {
             res.json({
                 confirmation: 'fail',
-                message: 'Invalid Resource'
+                message: err.message
             })
+        })
+})
 
-            return
-        }
+// DELETE
+router.delete('/:resource/:id', (req, res) => {
+    const resource = req.params.resource
+    const controller = controllers[resource]
+    if (controller == null) {
+        res.json({
+            confirmation: 'fail',
+            message: 'Invalid Resource'
+        })
 
-        controller.put(req.params.id, req.body)
-            .then(data => {
-                res.json({
-                    confirmation: 'success',
-                    data: data
-                })
+        return
+    }
+
+    controller.delete(req.params.id)
+        .then(data => {
+            res.json({
+                confirmation: 'success',
+                data: data
             })
-            .catch(err => {
-                res.json({
-                    confirmation: 'fail',
-                    message: err.message
-                })
-            })
-    })
-
-    // DELETE
-    app.delete('/:resource/:id', (req, res) => {
-        const resource = req.params.resource
-        const controller = controllers[resource]
-        if (controller == null) {
+        })
+        .catch(err => {
             res.json({
                 confirmation: 'fail',
-                message: 'Invalid Resource'
+                message: err.message
             })
+        })
+})
 
-            return
-        }
-
-        controller.delete(req.params.id)
-            .then(data => {
-                res.json({
-                    confirmation: 'success',
-                    data: data
-                })
-            })
-            .catch(err => {
-                res.json({
-                    confirmation: 'fail',
-                    message: err.message
-                })
-            })
-    })
-
-}
+module.exports = router
